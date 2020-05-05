@@ -1,0 +1,13 @@
+/covid-chestxray-dataset/
+/Figure1-COVID-chestxray-dataset/
+/rsna-pneumonia-detection-challenge/
+rsna_test_patients_normal.npy
+rsna_test_patients_pneumonia.npy
+test_split_v3.txt 
+train_split_v3.txt
+true_test.csv
+/data/
+hist_accuracy.csv
+loss_his.csv
+pred_test.csv
+__pycache__ 
