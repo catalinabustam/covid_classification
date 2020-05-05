@@ -21,6 +21,10 @@ import argparse
 import cv2
 import os
 
+# Load data.py file  where generator is defined
+from data import BalanceCovidDataset
+
+
 # Define data location 
 data_path = './data/'
 train_csv = data_path + 'train_split_v3.txt'
@@ -28,32 +32,6 @@ test_csv = data_path + 'test_split_v3.txt'
 
 # Set classification options
 mapping={'normal': 0,'pneumonia': 1,'COVID-19': 2}
-
-# Load train files
-#********************************
-with open(train_csv) as f:
-    trainfiles = f.readlines()
-
-y_train = []
-x_train = []
-for i in range(len(trainfiles)):
-  line = trainfiles[i].split()
-  path_f = os.path.join(data_path, 'train', line[1])
-
- # Some images have errors on dataset generation
-  if path.exists(path_f):
-    x = cv2.imread(path_f)
-    h, w, c = x.shape
-    x = x[int(h/6):, :]
-    x = cv2.resize(x, (224, 224))
-    x = x.astype('float32') / 255.0
-    y_train.append(mapping[line[2]])
-    x_train.append(x)
-y_train = np.array(y_train)
-y_train_c = to_categorical(y_train, num_classes=3)
-
-x_train = np.array(x_train)
-#*******************************************
 
 # Load test files
 #********************************
@@ -90,6 +68,25 @@ display_step = 1
 epochs = 25
 class_weights=[1, 1, 12]
 
+generator = BalanceCovidDataset(data_dir=data_path,
+                                csv_file=train_csv,
+                                covid_percent=0.3,
+                                class_weights=class_weights,
+                                batch_size= batch_size)
+total_batch= len(generator)
+#*******************************************
+
+# Define traing params
+
+#*******************************************
+learning_rate = 0.00002
+batch_size =6
+display_step = 1
+epochs = 25
+class_weights=[1, 1, 12]
+
+
+#From https://www.pyimagesearch.com/2020/03/16/detecting-covid-19-in-x-ray-images-with-keras-tensorflow-and-deep-learning/
 def vgg_model():
 	# load the VGG16 network, ensuring the head FC layer sets are left
 	# off
@@ -114,15 +111,12 @@ def vgg_model():
 
 model= vgg_model()
 
-
-#opt=tf.keras.optimizers.Adam(lr=learning_rate)
-
 # ********************************************
 # Train model
 #*********************************************
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-hist = model.fit(x_train,y_train_c, epochs=epochs, verbose=1, validation_data= (x_test, y_test_c), class_weight=class_weights)
+hist = model.fit(generator, steps_per_epoch=total_batch, epochs=epochs, verbose=1, validation_data= (x_test, y_test_c), class_weight=class_weights)
 
 #********************************************
 # Save results
