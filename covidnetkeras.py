@@ -1,7 +1,15 @@
-from tensorflow.keras.layers import Conv2D, Input, MaxPool2D, add, Flatten, Dense
-from keras import layers
-from keras.applications import VGG16
-from keras.layers.core import Flatten, Dense, Dropout, Lambda
+import tensorflow as tf
+import numpy as np
+import os
+import cv2
+import tensorflow.keras as keras
+from keras import models
+from keras import optimizers
+from sklearn.metrics import confusion_matrix
+import os.path
+from os import path
+import csv
+import argparse
 
 # Load keras_mode.py file where covidnet model is defined
 from keras_model import keras_model_build
@@ -78,17 +86,15 @@ class_weights=[1, 1, 12]
 
 model = keras_model_build()
 
-model= vgg_model()
-
 
 opt=tf.keras.optimizers.Adam(lr=learning_rate)
 
 # ********************************************
 # Train model
 #*********************************************
-model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-hist = model.fit(x_train,y_train, epochs=epochs, verbose=1)
+hist = model.fit(x_train,y_train_c, epochs=epochs, verbose=1)
 
 #********************************************
 # Save results
