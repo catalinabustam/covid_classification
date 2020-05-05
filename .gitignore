@@ -11,3 +11,4 @@ hist_accuracy.csv
 loss_his.csv
 pred_test.csv
 __pycache__ 
+.DS_Store

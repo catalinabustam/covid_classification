@@ -1,5 +1,5 @@
 # Detection of COVID-19 Cases from Chest X-Ray Images
-###### Based on COVID-NET: https://github.com/lindawangg/COVID-Net
+##### Based on COVID-NET: https://github.com/lindawangg/COVID-Net
 ###### And 
 ##### COVID-NET IN KERAS: https://github.com/busyyang/COVID-19
 
@@ -59,5 +59,7 @@ Performance metric: Accuracy
 ## Other experiment
 
 ### Just for validate another options, VGG16
+### run: python vgg_train.py 
+
 ![vgg](vgg.png)
 
