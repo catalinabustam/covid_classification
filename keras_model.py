@@ -1,3 +1,5 @@
+#from https://github.com/busyyang/COVID-19
+
 import tensorflow.keras as keras
 from tensorflow.keras.layers import Conv2D, Input, MaxPool2D, add, Flatten, Dense
 
@@ -12,7 +14,7 @@ def PEPXModel(input_tensor, filters, name):
 
 
 def keras_model_build(input_size=(224, 224, 3)):
-    # 输入
+ 
     input = Input(shape=input_size, name='input')
     x = Conv2D(input_shape=input_size, filters=64, kernel_size=(7, 7), activation='relu', padding='same',
                strides=(2, 2))(input)
@@ -20,14 +22,14 @@ def keras_model_build(input_size=(224, 224, 3)):
     # PEPX1_Conv1x1
     p_1_y = Conv2D(256, (1, 1), padding='same', activation='relu', name='PEPX1_Conv')(x)
 
-    # Stage1结构
+    # Stage1
     y_1_1 = PEPXModel(x, 256, 'PEPX1.1')
     y_1_2 = PEPXModel(add([y_1_1, p_1_y]), 256, 'PEPX1.2')
     y_1_3 = PEPXModel(add([y_1_1, y_1_2, p_1_y]), 256, 'PEPX1.3')
     # PEPX2_Conv1x1
     p_2_y = Conv2D(512, (1, 1), padding='same', activation='relu', name='PEPX2_Conv')(add([p_1_y, y_1_1, y_1_2, y_1_3]))
     p_2_y = MaxPool2D(pool_size=(2, 2))(p_2_y)
-    # Stage2结构
+    # Stage2
     y_2_1 = PEPXModel(add([y_1_3, y_1_2, y_1_1, p_1_y]), 512, 'PEPX2.1')
     y_2_1 = MaxPool2D(pool_size=(2, 2))(y_2_1)
     y_2_2 = PEPXModel(add([y_2_1, p_2_y]), 512, 'PEPX2.2')
@@ -38,7 +40,7 @@ def keras_model_build(input_size=(224, 224, 3)):
         add([p_2_y, y_2_1, y_2_2, y_2_3, y_2_4])
     )
     p_3_y = MaxPool2D(pool_size=(2, 2))(p_3_y)
-    # Stage3结构
+    # Stage3
     y_3_1 = PEPXModel(add([y_2_1, y_2_2, y_2_3, y_2_4, p_2_y]), 1024, 'PEPX3.1')
     y_3_1 = MaxPool2D(pool_size=(2, 2))(y_3_1)
     y_3_2 = PEPXModel(y_3_1, 1024, 'PEPX3.2')
@@ -51,7 +53,7 @@ def keras_model_build(input_size=(224, 224, 3)):
         add([p_3_y, y_3_1, y_3_2, y_3_3, y_3_4, y_3_5, y_3_6])
     )
     p_4_y = MaxPool2D(pool_size=(2, 2))(p_4_y)
-    # Stage4结构
+    # Stage4
     y_4_1 = PEPXModel(add([y_3_1, y_3_2, y_3_3, y_3_4, y_3_5, y_3_6, p_3_y]), 2048, 'PEPX4.1')
     y_4_1 = MaxPool2D(pool_size=(2, 2))(y_4_1)
     y_4_2 = PEPXModel(add([y_4_1, p_4_y]), 2048, 'PEPX4.2')
