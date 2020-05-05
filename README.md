@@ -35,7 +35,7 @@ Performance metric: Accuracy
 
 
 ## Confusion  Matrix
-![confusion_matrix](confusion_matrix.png)
+<img src="confusion_matrix.png" width="500" />
 
 ### Accuracy
 
