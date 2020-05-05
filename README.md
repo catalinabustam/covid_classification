@@ -37,23 +37,30 @@ Performance metric: Accuracy
 ## Confusion  Matrix
 ![confusion_matrix](confusion_matrix.png)
 
+### Accuracy
+
+| Training |Test           |
+|----------|:-------------:|
+| 96.4%    |  93.8%        |
+
 ### Sensitivity 
 
 | Normal   |Pneumonia      |COVID-19|
 |----------|:-------------:|------: |
-| 97.0%    |  90.0%        | 87%    |
+| 97.0%    |  86.2%        | 68%    |
 
 ### Positive Predictive Value 
 
 | Normal   |Pneumonia      |COVID-19|
 |----------|:-------------:|------: |
-|97.0%     |  90.0%        | 87%    |
+|91.3%     |  93.6%        | 75.0%    |
 
 ### Negative predictive value
+NPV Normal: 0.870, Pneumonia 0.962, COVID-19: 0.995
 
 | Normal   |Pneumonia      |COVID-19|
 |----------|:-------------:|------: |
-|97.0%     |  90.0%        | 87%    |
+|87.0%     |  96.2%        | 99.5%  |
 
 
 ## Other experiment

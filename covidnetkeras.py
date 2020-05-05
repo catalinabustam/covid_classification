@@ -94,7 +94,7 @@ opt=tf.keras.optimizers.Adam(lr=learning_rate)
 #*********************************************
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-hist = model.fit(x_train,y_train_c, epochs=epochs, verbose=1)
+hist = model.fit(x_train,y_train_c, epochs=epochs, verbose=1, validation_data= (x_test, y_test_c), class_weight=class_weights)
 
 #********************************************
 # Save results
