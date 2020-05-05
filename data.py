@@ -15,7 +15,7 @@ def _process_csv_file(file):
   return files
     
 class BalanceCovidDataset(keras.utils.Sequence):
-    'Generates data for Keras'
+  'Generates data for Keras'
   def __init__(
           self,
           data_dir,
