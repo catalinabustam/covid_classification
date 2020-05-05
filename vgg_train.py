@@ -1,20 +1,25 @@
-import tensorflow as tf
-import numpy as np
-import os
-import cv2
-import tensorflow.keras as keras
-from keras import models
-from keras import optimizers
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.layers import AveragePooling2D
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Input
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.utils import to_categorical
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 import os.path
 from os import path
-import csv
-import argparse
 
-from tensorflow.keras.layers import Conv2D, Input, MaxPool2D, add, Flatten, Dense
-from keras import layers
-from keras.applications import VGG16
-from keras.layers.core import Flatten, Dense, Dropout, Lambda
+import matplotlib.pyplot as plt
+import numpy as np
+import argparse
+import cv2
+import os
 
 # Define data location 
 data_path = './data/'
@@ -45,7 +50,7 @@ for i in range(len(trainfiles)):
     y_train.append(mapping[line[2]])
     x_train.append(x)
 y_train = np.array(y_train)
-y_train_c = keras.utils.to_categorical(y_train, num_classes=3)
+y_train_c = to_categorical(y_train, num_classes=3)
 
 x_train = np.array(x_train)
 #*******************************************
@@ -71,7 +76,7 @@ for i in range(len(testfiles)):
     y_test.append(mapping[line[2]])
     x_test.append(x)
 y_test = np.array(y_test)
-y_test_c = keras.utils.to_categorical(y_test, num_classes=3)
+y_test_c = to_categorical(y_test, num_classes=3)
 
 x_test = np.array(x_test)
 #*******************************************
@@ -86,21 +91,31 @@ epochs = 25
 class_weights=[1, 1, 12]
 
 def vgg_model():
-	conv_base = VGG16(weights='imagenet',
-         include_top=False,
-         input_shape=(224, 224, 3))
-	conv_base.trainable = False
-	model = models.Sequential()
-	model.add(conv_base)
-	model.add(layers.Flatten())
-	model.add(layers.Dense(256, activation='relu'))
-	model.add(layers.Dense(3, activation='sigmoid'))
+	# load the VGG16 network, ensuring the head FC layer sets are left
+	# off
+	baseModel = VGG16(weights="imagenet", include_top=False,
+	input_tensor=Input(shape=(224, 224, 3)))
+	# construct the head of the model that will be placed on top of the
+	# the base model
+	headModel = baseModel.output
+	headModel = AveragePooling2D(pool_size=(4, 4))(headModel)
+	headModel = Flatten(name="flatten")(headModel)
+	headModel = Dense(64, activation="relu")(headModel)
+	headModel = Dropout(0.5)(headModel)
+	headModel = Dense(3, activation="softmax")(headModel)
+	# place the head FC model on top of the base model (this will become
+	# the actual model we will train)
+	model = Model(inputs=baseModel.input, outputs=headModel)
+	# loop over all layers in the base model and freeze them so they will
+	# *not* be updated during the first training process
+	for layer in baseModel.layers:
+		layer.trainable = False
 	return model
 
 model= vgg_model()
 
 
-opt=tf.keras.optimizers.Adam(lr=learning_rate)
+#opt=tf.keras.optimizers.Adam(lr=learning_rate)
 
 # ********************************************
 # Train model
