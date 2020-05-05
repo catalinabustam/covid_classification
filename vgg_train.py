@@ -123,7 +123,20 @@ hist = model.fit(generator, steps_per_epoch=total_batch, epochs=epochs, verbose=
 #*******************************************
 model.save('model_vgg.h5')
 
+hist_loss = hist.history["loss"]
+hist_accuracy = hist.history["acc"]
+hist_accuracy_test = hist.history["val_acc"]
+hist_loss_test = hist.history["val_loss"]
+
+np.savetxt("loss_his_vgg.csv", hist_loss, delimiter=",", fmt='%s')
+np.savetxt("hist_accuracy_vgg.csv", hist_accuracy, delimiter=",", fmt='%s')
+np.savetxt("loss_test_vgg.csv", hist_loss_test, delimiter=",", fmt='%s')
+np.savetxt("hist_accuracy_test_vgg.csv", hist_accuracy_test, delimiter=",", fmt='%s')
+
 pred = model.predict(x_test)
+
+np.savetxt("pred_test_vgg.csv", np.argmax(pred, axis=1), delimiter=",", fmt='%s')
+np.savetxt("true_test_vgg.csv", y_test, delimiter=",", fmt='%s')
 
 matrix = confusion_matrix(y_test, np.argmax(pred, axis=1))
 matrix = matrix.astype('float')
