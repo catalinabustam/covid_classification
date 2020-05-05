@@ -76,7 +76,7 @@ class BalanceCovidDataset(keras.utils.Sequence):
 
   def __next__(self):
     # Get one batch of data
-    batch_x, batch_y, weights = self.__getitem__(self.n)
+    batch_x, batch_y = self.__getitem__(self.n)
     # Batch index
     self.n += 1
 
@@ -85,7 +85,7 @@ class BalanceCovidDataset(keras.utils.Sequence):
         self.on_epoch_end
         self.n = 0
 
-    return batch_x, batch_y, weights
+    return batch_x, batch_y
 
   def __len__(self):
       return int(np.ceil(len(self.datasets[0]) / float(self.batch_size)))
@@ -100,7 +100,7 @@ class BalanceCovidDataset(keras.utils.Sequence):
     batch_x, batch_y = np.zeros(
         (self.batch_size, *self.input_shape,
          self.num_channels)), np.zeros(self.batch_size)
-    if idx%200 == 0:
+    if (idx%200 == 0 and idx !=0):
       batch_files =  np.random.choice(self.datasets[1],
                                    size=self.batch_size,
                                    replace=False)
