@@ -59,7 +59,7 @@ x_test = np.array(x_test)
 learning_rate = 0.00002
 batch_size =6
 display_step = 1
-epochs = 25
+epochs = 100
 class_weights=[1, 1, 12]
 
 generator = BalanceCovidDataset(data_dir=data_path,
